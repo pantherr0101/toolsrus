@@ -10,7 +10,9 @@ description: A write-up for TryHackMe Room ToolsRUs
 
 
 
-## Recon
+### Recon
+
+#### Nmap
 
 Like any other room we'll start with a simple **nmap** scan.
 
@@ -23,6 +25,8 @@ nmap -sS -Pn toolsrus.thm
 <figure><img src=".gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src=".gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
+
+### Enumeration
 
 Lets enumerate a little more using nmap again to find out more about what's running on those ports.
 
@@ -38,7 +42,7 @@ Lets check out the website and see if we can find anything there.
 
 <figure><img src=".gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
 
-
+#### Gobuster
 
 All we get is a header hinting that there may be other subdomains that are up.
 
@@ -61,6 +65,10 @@ Visiting **http://toolsrus.thm/guidelines** we find which is the answer to our s
 
 For our 3rd flag we can take a look at the only webpage with a **Status: 401** meaning its: **protected**.
 
+### Bruteforcing
+
+#### Hydra
+
 Taking a look at that protected page I think we can use hydra here. After some research this is the command we have to use.
 
 ```
@@ -80,6 +88,8 @@ Lets run Gobuster again but on this port.
 
 <figure><img src=".gitbook/assets/image (17).png" alt=""><figcaption></figcaption></figure>
 
+#### Nikto
+
 Now lets use Nikto.
 
 ```
@@ -89,6 +99,10 @@ nikto -host http://toolsrus.thm:1234/manager/html
 <figure><img src=".gitbook/assets/image (18).png" alt=""><figcaption></figcaption></figure>
 
 As you can see the server is using **Apache/Coyote/1.1** and there's **5** documentations found by Nikto which is more than enough to find an exploit with Metasploit.
+
+### Privilege Escalation
+
+#### Metasploit
 
 ```
 msf console
@@ -125,6 +139,8 @@ Since it's an Apache server we need to set our target to 0 for Java.
 Nice! Now we have a meterpreter reverse shell running let's see who we are and our permissions and get our flag!
 
 <figure><img src=".gitbook/assets/image (26).png" alt=""><figcaption></figcaption></figure>
+
+### Conclusion
 
 Overall this was a super fun room to do and wasn't much of a challenge the Nikto search took awhile but I just went and made some coffee while it did it's thing.
 
