@@ -2,8 +2,6 @@
 
 ## THM&#x20;
 
-* [Brains](README.md)
-
-***
-
-* [ToolsRUs](toolsrus.md)
+* [README](README.md)
+* [ToolsRUs](thm/toolsrus.md)
+* [Brains](<README (1).md>)
