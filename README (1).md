@@ -6,7 +6,7 @@ description: The city forgot to close its gate. - by Dex01, strategos and l000g1
 
 Write up by Amir Lahlou
 
-<div align="right"><figure><img src=".gitbook/assets/image.png" alt="" width="188"><figcaption></figcaption></figure></div>
+<div align="right"><figure><img src=".gitbook/assets/image (10).png" alt="" width="188"><figcaption></figcaption></figure></div>
 
 ### Recon
 
@@ -40,7 +40,7 @@ gobuster dir -u http://<IP> -w /usr/share/wordlists/dirb/common.txt -x php,html,
 
 After the directory bruteforce finished up we don't see anything special so lets take a look at port 50000 from our nmap scan from earlier.
 
-<div align="left"><figure><img src=".gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure></div>
+<div align="left"><figure><img src=".gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure></div>
 
 ### Enumeration
 
@@ -48,13 +48,13 @@ After visiting **`<IP>:50000/login.html`** we find a TeamCity login page running
 
 
 
-<figure><img src=".gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/image (3) (1).png" alt=""><figcaption></figcaption></figure>
 
 
 
 With a quick google search we can find **JetBrains TeamCity CVE-2024-271-198 and CVE-2024-27199** on [Rapid7](https://www.rapid7.com/blog/post/2024/03/04/etr-cve-2024-27198-and-cve-2024-27199-jetbrains-teamcity-multiple-authentication-bypass-vulnerabilities-fixed/).&#x20;
 
-<figure><img src=".gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/image (4) (1).png" alt=""><figcaption></figcaption></figure>
 
 <pre class="language-msf"><code class="lang-msf"><strong>curl -ik 'http://10.201.44.80:50000/hax?jsp=/app/rest/server;.jsp'
 </strong></code></pre>

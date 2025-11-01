@@ -6,7 +6,7 @@ description: A write-up for TryHackMe Room ToolsRUs
 
 
 
-<div data-full-width="false"><figure><img src="../.gitbook/assets/image (5).png" alt="" width="375"><figcaption></figcaption></figure></div>
+<div data-full-width="false"><figure><img src="../.gitbook/assets/image (5) (1).png" alt="" width="375"><figcaption></figcaption></figure></div>
 
 
 
@@ -20,11 +20,11 @@ Like any other room we'll start with a simple **nmap** scan.
 nmap -sS -Pn toolsrus.thm
 ```
 
-<figure><img src="../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (7) (1).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (8) (1).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (9) (1).png" alt=""><figcaption></figcaption></figure>
 
 ### Enumeration
 
@@ -40,7 +40,7 @@ From our nmap scan we can see 4 ports open, 22 for **SSH,** 80 for **HTTP** (Web
 
 Lets check out the website and see if we can find anything there.
 
-<figure><img src="../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (10) (1).png" alt=""><figcaption></figcaption></figure>
 
 #### Gobuster
 
